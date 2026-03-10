@@ -9,4 +9,9 @@
     <import resource="owner-context.xml"/>
     <import resource="pet-context.xml"/>
 
+    <!--  컴포넌트 스캐닝 활성화  -->
+    <context:component-scan base-package="com.beyond.di" />
+    <!--  location 속석에 지정해주는 properties 파일을 읽어보도록 설정  -->
+    <context:property-placeholder location="classpath:character.properties,classpath:driver.properties"/>
+
 </beans>
