@@ -26,10 +26,9 @@ public class Character {
 
     public String quest(String questName) {
 
-        if (true) {
-
-            throw new RuntimeException("Quest 수행 중 예외 발생");
-        }
+       // if (true) {
+       //     throw new RuntimeException("Quest 수행 중 예외 발생");
+       // }
 
         return String.format("%s 퀘스트 진행 중..\n", questName);
 
