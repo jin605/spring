@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
@@ -36,6 +37,7 @@ class CharacterTest {
     }
 
     @Test
+    @DisplayName("quest() 메소드 테스트")
     void questTest() {
 
         // 프록시 객체 확인
@@ -48,4 +50,14 @@ class CharacterTest {
 
 
     }
+
+    @Test
+    @DisplayName("attack() 메소드 테스트")
+    void attackTest() {
+
+        assertThat(character.getWeapon()).isNotNull();
+        assertThat(character.getWeapon().attack()).isNotNull();
+
+    }
+
 }
