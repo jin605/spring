@@ -2,6 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.beyond.university.student.model.mapper.StudentMapper">
+<!--
+    sql 요소
+        - 증복되는 쿼리를 재 사용하기 sql 조각을 선언하기 위한 요소이다.
+        -
+-->
+    <sql id="selectStudentSql">
+
+        SELECT student_no,
+               department_no,
+               student_name,
+               student_ssn,
+               student_address,
+               entrance_date,
+               absence_yn,
+               coach_professor_no
+        FROM student
+    </sql>
 
     <resultMap id="studentResultMap" type="Student">
         <id property="no" column="student_no"/>
@@ -18,30 +35,12 @@
     외부에서 전달받은 파라미터가 있으며 해당 파라미터의 타입을 지정해야 한다. (parameterType 속성)
     -->
     <select id="selectAllByDepartmentNo" parameterType="string" resultMap="studentResultMap">
-        SELECT student_no,
-               department_no,
-               student_name,
-               student_ssn,
-               student_address,
-               entrance_date,
-               absence_yn,
-               coach_professor_no
-        FROM student
+        <include refid="selectStudentSql"/>
         WHERE department_no = #{dno}
     </select>
+
     <select id="selectStudentByNo" parameterType="string" resultMap="studentResultMap">
-
-        SELECT student_no,
-               department_no,
-               student_name,
-               student_ssn,
-               student_address,
-               entrance_date,
-               absence_yn,
-               coach_professor_no
-        FROM student
+        <include refid="selectStudentSql"/>
         WHERE student_no = #{sno}
-
     </select>
-
 </mapper>

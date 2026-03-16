@@ -16,6 +16,7 @@
             th:field
                 - th:field 속성을 사용하면 태그의 id, name, value 속성이 자동으로 설정된다.
                 - 단, 객체의 경우 *{} 표현법을 사용하여 객체의 프로퍼티에 접근할 수 있다.
+                - select 태그에서 th:filed 속성을 사용하면 option 태그의 value속성과 자동으로 selected 속성이 추가된다.
             -->
             <input type="text" th:field="*{no}" readonly>
 
