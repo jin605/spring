@@ -1,9 +1,12 @@
 package com.beyond.university.department.model.service;
 
 import com.beyond.university.department.model.vo.Department;
+import com.beyond.university.student.model.vo.Student;
 
 import java.util.List;
 
 public interface DepartmentService {
     List<Department> getDepartments();
+
+    Department getDepartmentByNo(String departmentNo);
 }

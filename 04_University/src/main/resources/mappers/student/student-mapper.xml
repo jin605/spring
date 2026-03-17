@@ -2,13 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.beyond.university.student.model.mapper.StudentMapper">
-<!--
-    sql 요소
-        - 증복되는 쿼리를 재 사용하기 sql 조각을 선언하기 위한 요소이다.
-        -
--->
+    <!--
+        sql 요소
+          - 중복되는 쿼리를 재사용하기 위한 sql 조각을 선언하기 위한 요소이다.
+    -->
     <sql id="selectStudentSql">
-
         SELECT student_no,
                department_no,
                student_name,
@@ -30,52 +28,111 @@
         <result property="absenceYn" column="absence_yn"/>
         <result property="coachProfessorNo" column="coach_professor_no"/>
     </resultMap>
+
     <!--
-    외부에서 전달받은 파라미터 값은 #{파라미터명}으로 가져온다.
-    외부에서 전달받은 파라미터가 있으며 해당 파라미터의 타입을 지정해야 한다. (parameterType 속성)
+    연관 관계 매핑
+    학생 상세 조회(학과 정보 포함)에서 사용할 resultMap 정의
+        extends 속성은 다른 resultMap 상속하는 속성이다.
+    -->
+    <resultMap id="studentResultMapWithDepartment" type="Student" extends="studentResultMap">
+        <!--
+        association 요소
+          - 객체에 해당하는 필드에 조회 결과를 매핑할 때 사용한다.
+          - select 속성은 조회하고자 하는 select 쿼리문의 ID를 입력한다.
+          - column 속성은 조회하고자 하는 select 쿼리문에 파라미터를 전달한다.
+
+        1. 쿼리문을 각각 만들어서 하나의 ResultMap에서 매핑하는 방법
+        <association javaType="Department" property="department"
+            select="com.beyond.university.department.model.mapper.DepartmentMapper.selectDepartmentByNo"
+            column="department_no"/>
+
+        2. 하나의 쿼리문을 만들어서 ResultMap에서 매핑하는 방법
+        -->
+        <association javaType="Department" property="department"
+                     columnPrefix="d_"
+                     resultMap="com.beyond.university.department.model.mapper.DepartmentMapper.departmentResultMap"/>
+    </resultMap>
+
+    <!--
+        외부에서 전달받은 파라미터 값은 #{파라미터명}으로 가져온다.
+        외부에서 전달받은 파라미터가 있으면 해당 파라미터의 타입을 지정해야 한다. (parameterType 속성)
     -->
     <select id="selectAllByDepartmentNo" parameterType="string" resultMap="studentResultMap">
         <include refid="selectStudentSql"/>
         WHERE department_no = #{dno}
     </select>
 
+    <!--
+    학생 상세 조회
     <select id="selectStudentByNo" parameterType="string" resultMap="studentResultMap">
         <include refid="selectStudentSql"/>
         WHERE student_no = #{sno}
     </select>
+    -->
+
+    <!--
+    연관 관계 매핑
+    학생 상세 조회 (학과 정보 포함)
+
+    1. 쿼리문을 각각 만들어서 하나의 ResultMap에서 매핑하는 방법
+    <select id="selectStudentByNo" parameterType="string" resultMap="studentResultMapWithDepartment">
+        <include refid="selectStudentSql"/>
+        WHERE student_no = #{sno}
+    </select>
+
+    2. 하나의 쿼리문를 만들어서 ResultMap에서 매핑하는 방법
+    -->
+    <select id="selectStudentByNo" parameterType="string" resultMap="studentResultMapWithDepartment">
+        SELECT s.student_no,
+               s.department_no,
+               s.student_name,
+               s.student_ssn,
+               s.student_address,
+               s.entrance_date,
+               s.absence_yn,
+               s.coach_professor_no,
+               d.department_no AS 'd_department_no',
+            d.department_name AS 'd_department_name',
+            d.category AS 'd_category',
+            d.open_yn AS 'd_open_yn',
+            d.capacity AS 'd_capacity'
+        FROM student s
+                 LEFT OUTER JOIN department d ON s.department_no = d.department_no
+        WHERE s.student_no = #{sno}
+    </select>
 
     <insert id="insertStudent" parameterType="Student">
         <!--
-            selectKey 요소는 pK를 생성하기 위한 요소이다.
-                - resultType 속성은 쿼리의 실행 결과 자료형이다.
-                - keyProperty 속성은 생성된 PK를 저장하기 위해 파라미터로 전달된 객체의 필드명을 작성한다.
-                - order 속성은 PK를 생성하기 위한 쿼리의 실행 시점을 결정한다.
-                    BEFORE INSERT 쿼리 실행전에 PK를 생성하기 위한 쿼리를 실핸한다.
-                    AFTER INSERT 쿼리 실행후에 PK를 생성하기 위한 쿼리를 실핸한다.
+            selectKey 요소는 PK를 생성하기 위한 요소이다.
+                resultType 속성은 쿼리의 실행 결과 자료형이다.
+                keyProperty 속성은 생성된 PK를 저장하기 위해 파라미터로 전달된 객체의 필드명을 작성한다.
+                order 속성은 PK를 생성하기 위한 쿼리의 실행 시점을 결정한다.
+                    BEFORE는 INSERT 쿼리 실행전에 PK를 생성하기 위한 쿼리를 실행한다.
+                    AFTER는 INSERT 쿼리 실행후에 PK를 생성하기 위한 쿼리를 실행한다.
         -->
         <selectKey resultType="string" keyProperty="no" order="BEFORE">
             SELECT CONCAT('A', RPAD(FLOOR((RAND() * 100000) + 1), 6, '0'))
         </selectKey>
 
-            INSERT INTO student (
-            student_no,
-            department_no,
-            student_name,
-            student_ssn,
-            student_address,
-            entrance_date,
-            absence_yn,
-            coach_professor_no
+        INSERT INTO student (
+        student_no,
+        department_no,
+        student_name,
+        student_ssn,
+        student_address,
+        entrance_date,
+        absence_yn,
+        coach_professor_no
         ) values (
-            #{no},
-            #{departmentNo},
-            #{name},
-            #{ssn},
-            #{address},
-            #{entranceDate},
-            'N',
-            NULL
-            )
+        #{no},
+        #{departmentNo},
+        #{name},
+        #{ssn},
+        #{address},
+        #{entranceDate},
+        'N',
+        NULL
+        )
     </insert>
 
     <update id="updateStudent" parameterType="Student">
@@ -94,33 +151,4 @@
         FROM student
         WHERE student_no = #{sno}
     </delete>
-
-
-
-
 </mapper>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

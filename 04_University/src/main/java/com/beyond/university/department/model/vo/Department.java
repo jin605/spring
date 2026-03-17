@@ -1,8 +1,11 @@
 package com.beyond.university.department.model.vo;
 
+import com.beyond.university.student.model.vo.Student;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -13,6 +16,8 @@ public class Department {
     private String name;
 
     private String category;
+
+    private List<Student> students;
 
     private String openYn;
 
