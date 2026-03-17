@@ -2,13 +2,16 @@ package com.beyond.university.student.controller;
 
 import com.beyond.university.department.model.dto.DepartmentsDto;
 import com.beyond.university.department.model.service.DepartmentService;
+import com.beyond.university.student.model.dto.StudentAddRequestDto;
 import com.beyond.university.student.model.dto.StudentDto;
+import com.beyond.university.student.model.dto.StudentUpdateRequestDto;
 import com.beyond.university.student.model.service.StudentService;
 import com.beyond.university.student.model.vo.Student;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -72,6 +75,88 @@ public class StudentController {
 
         return modelAndView;
 
+    }
+
+    @GetMapping("/student/add")
+    public ModelAndView add(ModelAndView modelAndView) {
+
+        List<DepartmentsDto> departments =
+                departmentService.getDepartments()
+                        .stream()
+                        .map(DepartmentsDto::new)
+                        .toList();
+
+        modelAndView.addObject("departments", departments);
+        modelAndView.setViewName("student/add");
+
+        return modelAndView;
+
+    }
+
+    @PostMapping("/student/add")
+    public ModelAndView add(ModelAndView modelAndView, StudentAddRequestDto studentAddRequestDto) {
+
+        Student student = studentAddRequestDto.toStudent();
+
+        int result = studentService.save(student);
+
+        log.info("Student No : {}", student.getNo());
+
+
+
+        if (result>0) {
+            modelAndView.addObject("msg", "학생이 등록되었습니다.");
+            modelAndView.addObject("location", "/student/info?sno=" + student.getNo());
+        } else {
+            modelAndView.addObject("msg", "학생이 등록을 실패하였습니다..");
+            modelAndView.addObject("location", "/student/add");
+
+        }
+
+        modelAndView.setViewName("common/msg");
+
+        return modelAndView;
+    }
+
+    @PostMapping("/student/update")
+    public ModelAndView update(ModelAndView modelAndView,
+                               StudentUpdateRequestDto studentUpdateRequestDto) {
+
+        Student student = studentUpdateRequestDto.toStudent();
+        int result = studentService.save(student);
+
+        if (result > 0) {
+            modelAndView.addObject("msg", "학생 정보가 수정되었습니다.");
+        } else {
+            modelAndView.addObject("msg", "학생 정보을 수정을 실패하였습니다.");
+        }
+
+        modelAndView.addObject("location", "/student/info?sno=" + student.getNo());
+        modelAndView.setViewName("common/msg");
+
+        return modelAndView;
+    }
+
+    @PostMapping("/student/delete")
+    public ModelAndView delete(ModelAndView modelAndView, String sno) {
+
+        log.info("Student No : {}", sno);
+
+        int result = studentService.delete(sno);
+
+        if (result>0) {
+            modelAndView.addObject("msg", "학생이 삭제 되었습니다.");
+            modelAndView.addObject("location", "/student/search");
+        } else {
+            modelAndView.addObject("msg", "학생 삭제를 실패하였습니다.");
+            modelAndView.addObject("location", "/student/info?sno=" + sno);
+
+        }
+
+        modelAndView.setViewName("common/msg");
+
+
+        return modelAndView;
     }
 
 

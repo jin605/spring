@@ -8,7 +8,7 @@
     <main>
         <h3>학생 상세 조회</h3>
 
-        <form th:object="${student}">
+        <form th:object="${student}" th:action="@{/student/update}" method="post">
             <label for="no">학번 : </label>
 <!--            <input type="text" id="no" name="no" th:value="${student.no}" readonly>-->
 <!--            <input type="text" id="no" name="no" th:value="*{no}" readonly>-->
@@ -78,9 +78,25 @@
             <br><br>
 
             <input type="submit" value="수정">
-            <input type="button" value="삭제">
+            <input type="button" onclick="deleteStudent();" value="삭제">
 
         </form>
+
+
+        <form id="studentDeleteForm" th:action="@{/student/delete}" method="post">
+            <input type="hidden" name="sno" th:value="${student.no}">
+        </form>
+
+        <script>
+            function deleteStudent() {
+                if (confirm("정말로 삭제하시겠습니까?")) {
+                    let studentDeleteFrom = document.getElementById('studentDeleteForm');
+
+                    studentDeleteFrom.submit();
+                }
+            }
+        </script>
+
     </main>
 </body>
 </html>
