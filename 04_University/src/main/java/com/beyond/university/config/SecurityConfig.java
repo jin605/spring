@@ -22,12 +22,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
+        // CSRF(Cross-Site Request Forgery)
+        //  - 공격자가 사용자의 브라우저를 악용하여 인증된 세션을 가진 사용자의 권한으로 악성 요청을 보내는 공격
+        //  - 스프링 시큐리티는 기본적으로 CSRF 보호 기능을 활성화하여 GET 요청을 제외한 요청에 대해 CSRF 토큰을 검증한다.
         httpSecurity
-                .csrf(Customizer.withDefaults())
+                .csrf(auth -> auth.disable()) // CSRF 설정 비활성화(JWT일떄는 뺀다)
+                .csrf(Customizer.withDefaults()) // CSRF 기본 설정 사용
                 .httpBasic(Customizer.withDefaults()) // http 인증
-                .formLogin(Customizer.withDefaults()) // 폼 로그인 확설화
+                // 폼 로그인 확설화
+                .formLogin(formlogin ->
+                        formlogin
+                                .loginPage("/login")
+                                //.usernameParameter("userId")
+                                //.passwordParameter("userPwd")
+                        )
                 .authorizeHttpRequests(authorizationRequest ->
-                        authorizationRequest.anyRequest().authenticated()
+                        authorizationRequest
+                                .requestMatchers("/login").permitAll()
+                                .anyRequest().authenticated()
                 );
 
         return httpSecurity.build();
