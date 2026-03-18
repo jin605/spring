@@ -36,6 +36,11 @@ public class SecurityConfig {
                                 //.usernameParameter("userId")
                                 //.passwordParameter("userPwd")
                         )
+                .rememberMe(rememberMe ->
+                        rememberMe
+                                .key("beyond") // 토큰 생성 시 서명에 사용되는 키 설정
+                                .tokenValiditySeconds(3600) // 쿠키의 유효시간을 지정(초)
+                )
                 // 접급 제어 설정
                 .authorizeHttpRequests(authorizationRequest ->
                         authorizationRequest
@@ -45,12 +50,12 @@ public class SecurityConfig {
                 // 로그아웃 설정
                 .logout(logout ->
                         logout
-                                .logoutUrl("/logut")
+                                .logoutUrl("/logout")
                                 .logoutSuccessUrl("/login?logout")
                                 .invalidateHttpSession(true)
                                 .deleteCookies("JSESSIONID")
-
                 );
+
 
 
         return httpSecurity.build();
