@@ -1,7 +1,11 @@
 package com.beyond.university.config;
 
+import com.beyond.university.auth.handler.AuthenticationFailureHandlerImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -20,7 +25,9 @@ public class SecurityConfig {
     // UserDetailsService
     //  - 전달받은 정보를 통해 사용자를 찾아 UserDetails 객체를 생성 후 반환한다.
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity httpSecurity,
+            AuthenticationFailureHandler authenticationFailureHandler) throws Exception {
 
         // CSRF(Cross-Site Request Forgery)
         //  - 공격자가 사용자의 브라우저를 악용하여 인증된 세션을 가진 사용자의 권한으로 악성 요청을 보내는 공격
@@ -35,6 +42,8 @@ public class SecurityConfig {
                                 .loginPage("/login")
                                 //.usernameParameter("userId")
                                 //.passwordParameter("userPwd")
+                                .failureHandler(authenticationFailureHandler)
+
                         )
                 // 기억하기 기능
                 .rememberMe(rememberMe ->
@@ -90,9 +99,29 @@ public class SecurityConfig {
 //        return new InMemoryUserDetailsManager(user, admin);
 //    }
 
+    // AuthenticationManager
+    @Bean
+    public AuthenticationManager authenticationManager(
+            PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+
+        provider.setPasswordEncoder(passwordEncoder);
+
+
+
+        return new ProviderManager(provider);
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
 
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+
+        return new AuthenticationFailureHandlerImpl();
     }
 }

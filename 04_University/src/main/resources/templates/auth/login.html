@@ -22,7 +22,14 @@
             <label for="remember-me">로그인 유지: </label>
             <input type="checkbox" id="remember-me" name="remember-me">
 
+            <br><br>
+
+            <span style="color: red" th:text="${param.error}"></span>
+
+            <br>
+
             <input type="submit" value="로그인">
+
 
         </form>
 
