@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizationRequest ->
                         authorizationRequest
                                 .requestMatchers("/login").permitAll()
+                                .requestMatchers("/js/**","/css/**","/images/**").permitAll() // 정적 리소스 허용
                                 .anyRequest().authenticated()
                 )
                 // 로그아웃 설정
@@ -66,29 +67,28 @@ public class SecurityConfig {
                 );
 
 
-
         return httpSecurity.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        // 인 메모리 방식 설정 (테스트 용도로 사용)
-        UserDetails user = User.builder()
-                .username("user")
-                //.password("{noop}1234")
-                .password(passwordEncoder.encode("1234"))
-                .roles("USER")
-                .build();
-
-        UserDetails admin = User.builder()
-                .username("admin")
-                //.password("{noop}5678")
-                .password(passwordEncoder.encode("5678"))
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+//        // 인 메모리 방식 설정 (테스트 용도로 사용)
+//        UserDetails user = User.builder()
+//                .username("user")
+//                //.password("{noop}1234")
+//                .password(passwordEncoder.encode("1234"))
+//                .roles("USER")
+//                .build();
+//
+//        UserDetails admin = User.builder()
+//                .username("admin")
+//                //.password("{noop}5678")
+//                .password(passwordEncoder.encode("5678"))
+//                .roles("ADMIN")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(user, admin);
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
