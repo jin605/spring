@@ -36,11 +36,22 @@ public class SecurityConfig {
                                 //.usernameParameter("userId")
                                 //.passwordParameter("userPwd")
                         )
+                // 접급 제어 설정
                 .authorizeHttpRequests(authorizationRequest ->
                         authorizationRequest
                                 .requestMatchers("/login").permitAll()
                                 .anyRequest().authenticated()
+                )
+                // 로그아웃 설정
+                .logout(logout ->
+                        logout
+                                .logoutUrl("/logut")
+                                .logoutSuccessUrl("/login?logout")
+                                .invalidateHttpSession(true)
+                                .deleteCookies("JSESSIONID")
+
                 );
+
 
         return httpSecurity.build();
     }
