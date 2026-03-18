@@ -36,10 +36,19 @@ public class SecurityConfig {
                                 //.usernameParameter("userId")
                                 //.passwordParameter("userPwd")
                         )
+                // 기억하기 기능
                 .rememberMe(rememberMe ->
                         rememberMe
                                 .key("beyond") // 토큰 생성 시 서명에 사용되는 키 설정
                                 .tokenValiditySeconds(3600) // 쿠키의 유효시간을 지정(초)
+                )
+                // 세션 관리 기능
+                // 로그인 세션 1개만 유지
+                .sessionManagement(sessionManagement ->
+                        sessionManagement
+                                .invalidSessionUrl("/login?invalid")
+                                .maximumSessions(1)
+                                .expiredUrl("/login?expired")
                 )
                 // 접급 제어 설정
                 .authorizeHttpRequests(authorizationRequest ->
