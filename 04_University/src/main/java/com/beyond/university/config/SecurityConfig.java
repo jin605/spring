@@ -1,6 +1,7 @@
 package com.beyond.university.config;
 
 import com.beyond.university.auth.handler.AuthenticationFailureHandlerImpl;
+import com.beyond.university.auth.handler.AuthenticationSuccessHandlerImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +29,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity httpSecurity,
-            AuthenticationFailureHandler authenticationFailureHandler) throws Exception {
+            AuthenticationFailureHandler authenticationFailureHandler,
+            AuthenticationSuccessHandler authenticationSuccessHandler) throws Exception {
 
         // CSRF(Cross-Site Request Forgery)
         //  - 공격자가 사용자의 브라우저를 악용하여 인증된 세션을 가진 사용자의 권한으로 악성 요청을 보내는 공격
@@ -43,6 +46,7 @@ public class SecurityConfig {
                                 //.usernameParameter("userId")
                                 //.passwordParameter("userPwd")
                                 .failureHandler(authenticationFailureHandler)
+                                .successHandler(authenticationSuccessHandler)
 
                         )
                 // 기억하기 기능
@@ -107,14 +111,14 @@ public class SecurityConfig {
 //        return new InMemoryUserDetailsManager(user, admin);
 //    }
 
-    // AuthenticationManager
-    @Bean
-    public AuthenticationManager authenticationManager(
-            PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+        // AuthenticationManager
+        @Bean
+        public AuthenticationManager authenticationManager(
+                PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
 
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+            DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
 
-        provider.setPasswordEncoder(passwordEncoder);
+            provider.setPasswordEncoder(passwordEncoder);
 
 
 
@@ -131,5 +135,11 @@ public class SecurityConfig {
     public AuthenticationFailureHandler authenticationFailureHandler() {
 
         return new AuthenticationFailureHandlerImpl();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+
+        return new AuthenticationSuccessHandlerImpl();
     }
 }
