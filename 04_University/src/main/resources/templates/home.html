@@ -35,6 +35,8 @@
     <!-- 관리자가 로그인하면 링크가 보인다. -->
     <!-- <a th:href="@{/admin/info}" sec:authorize="hasRole('ADMIN')">관리자 페이지</a> -->
     <a th:href="@{/admin/info}" sec:authorize-url="/admin/info">관리자 페이지</a>
+
+
 </main>
 </body>
 </html>
