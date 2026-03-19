@@ -1,13 +1,27 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/baseLayout::baseLayout(~{::title}, ~{::main})}" lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{layout/baseLayout::baseLayout(~{::title}, ~{::main})}" lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>사용자 페이지</title>
 </head>
 <body>
-    <main>
-        <h3>사용자 페이지</h3>
-    </main>
+<main>
+    <h3>사용자 페이지</h3>
+    <!-- 현재 사용자의 username 출력 -->
+    <!-- 아이디 : <span th:text="${#authentication.name}"></span> -->
+    <!-- 아이디 : <span sec:authentication="name"></span> -->
 
+    <!-- 인증 주체에 해당하는 객체 출력 -->
+    <!-- <span sec:authentication="principal"></span> -->
+
+    아이디 : <span sec:authentication="principal.username"></span>
+    <br>
+    이름 : <span sec:authentication="principal.nickname"></span>
+    <br>
+    이메일 : <span sec:authentication="principal.email"></span>
+    <br>
+    <!-- 사용자의 권한 출력 -->
+    권한 : <span sec:authentication="authorities"></span>
+</main>
 </body>
 </html>
