@@ -13,8 +13,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class AuthController {
 
     // @Autowired
-    // private PasswordEncoder passwordEncoder;
 
+    // private PasswordEncoder passwordEncoder;
     @GetMapping("/login")
     public ModelAndView login(ModelAndView modelAndView) {
 

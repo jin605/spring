@@ -13,6 +13,11 @@ import java.util.List;
 public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentMapper departmentMapper;
 
+    public int getDepartmentCount() {
+
+        return departmentMapper.selectDepartmentsCount();
+    }
+
     @Override
     public List<Department> getDepartments(int page, int numOfRows) {
 
@@ -39,6 +44,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         RowBounds rowBounds = new RowBounds(offset, numOfRows);
 
         return departmentMapper.selectAll(rowBounds);
+
     }
 
 }

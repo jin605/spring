@@ -11,6 +11,13 @@
         <result property="capacity" column="capacity"/>
     </resultMap>
 
+    <select id="selectDepartmentsCount" resultType="_int">
+
+        SELECT COUNT(*)
+        FROM department
+
+    </select>
+
     <select id="selectAll" resultMap="departmentResultMap">
 
         SELECT department_no,
