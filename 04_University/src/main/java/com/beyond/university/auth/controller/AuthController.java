@@ -1,15 +1,12 @@
 package com.beyond.university.auth.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
-@RestController
+@Controller
 public class AuthController {
 
     // @Autowired
@@ -31,6 +28,32 @@ public class AuthController {
         return modelAndView;
     }
 
+    @GetMapping("/user/info")
+    public String userInfo() {
+
+        log.info("사용자 페이지 요청");
+        return "user/info";
+    }
+
+    @GetMapping("/admin/info")
+    public String adminInfo() {
+
+        log.info("관리자 페이지 요청");
+        return "admin/info";
+
+    }
+
+    @GetMapping("/access-denied")
+    public ModelAndView accessDenied(ModelAndView modelAndView) {
+
+        log.info("권한 오류 페이지 요청");
+
+        modelAndView.addObject("msg", "접근 권한이 없습니다.");
+        modelAndView.addObject("location", '/');
+        modelAndView.setViewName("common/msg");
+
+        return modelAndView;
+    }
 
 
 }

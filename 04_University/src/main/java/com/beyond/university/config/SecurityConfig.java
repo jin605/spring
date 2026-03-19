@@ -59,11 +59,19 @@ public class SecurityConfig {
                                 .maximumSessions(1)
                                 .expiredUrl("/login?expired")
                 )
+                // 에러 핸들러 설정
+                .exceptionHandling(exceptionHandling ->
+                        // 권한이 없는 계정에서 잘못된 접근 시 이동할 URL을 지정한다.
+                        exceptionHandling
+                                .accessDeniedPage("/access-denied")
+                )
                 // 접급 제어 설정
                 .authorizeHttpRequests(authorizationRequest ->
                         authorizationRequest
-                                .requestMatchers("/login").permitAll()
                                 .requestMatchers("/js/**","/css/**","/images/**").permitAll() // 정적 리소스 허용
+                                .requestMatchers("/login").permitAll()
+                                .requestMatchers("/user/**").hasAnyRole("ADMIN","USER")
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 // 로그아웃 설정
