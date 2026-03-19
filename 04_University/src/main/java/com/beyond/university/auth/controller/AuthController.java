@@ -1,6 +1,9 @@
 package com.beyond.university.auth.controller;
 
+import com.beyond.university.auth.model.vo.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,10 +31,23 @@ public class AuthController {
         return modelAndView;
     }
 
+    // 컨트롤러에서 인증된 사용자 정보를 가져오는 방법
     @GetMapping("/user/info")
-    public String userInfo() {
+    // public String userInfo() {
+    // 2. Authentication 객체를 메소드의 매개변수로 가져오는 방법
+    // public String userInfo(Authentication authentication) {
+    // 3. @AuthenticationPrincipal 어노테이션을 사용하는 방법
+    public String userInfo(@AuthenticationPrincipal User loginUser) {
 
         log.info("사용자 페이지 요청");
+
+        // 1. SecurityContextHolder를 사용하는 방법
+        // SecurityContext securityContext = SecurityContextHolder.getContext();
+        // Authentication authentication = securityContext.getAuthentication();
+        // User loginUser = (User) authentication.getPrincipal();
+
+        System.out.println(loginUser);
+
         return "user/info";
     }
 
