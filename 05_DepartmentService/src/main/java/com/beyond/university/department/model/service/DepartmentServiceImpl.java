@@ -5,6 +5,7 @@ import com.beyond.university.department.model.vo.Department;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class DepartmentServiceImpl implements DepartmentService {
+
     private final DepartmentMapper departmentMapper;
 
     public int getDepartmentCount(String openYn) {
@@ -25,6 +27,18 @@ public class DepartmentServiceImpl implements DepartmentService {
         return departmentMapper.selectDepartmentNo(departmentNo);
     }
 
+    @Override
+    @Transactional
+    public void save(Department department) {
+        if (department.getNo() != null) {
+            // update
+
+        } else {
+            // insert
+            departmentMapper.insertDepartment(department);
+        }
+
+    }
 
     @Override
     public List<Department> getDepartments(int page, int numOfRows, String openYn) {

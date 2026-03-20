@@ -61,4 +61,26 @@
 
     </select>
 
+    <insert id="insertDepartment" parameterType="Department">
+        <selectKey resultType="string" keyProperty="no" order="BEFORE">
+            SELECT LPAD(CONVERT(department_no, INT) + 1, 3, 0)
+            FROM department
+            ORDER BY department_no DESC LIMIT 1
+        </selectKey>
+
+        INSERT INTO department (
+                    department_no,
+                    department_name,
+                    category,
+                    open_yn ,
+                    capacity
+        ) VALUES (
+                    #{no},
+                    #{name},
+                    #{category},
+                    #{openYn},
+                    #{capacity}
+        )
+    </insert>
+
 </mapper>

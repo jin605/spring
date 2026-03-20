@@ -1,6 +1,5 @@
-package com.beyond.university.department.model.dto;
+package com.beyond.university.common.model.dto;
 
-import com.beyond.university.department.model.vo.Department;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.ToString;
@@ -11,22 +10,30 @@ import java.util.List;
 
 @Getter
 @ToString
-public class DepartmentResponseDto {
+public class BaseResponseDto<T> {
 
     @Schema(description = "응답 코드", example = "200")
-    private final int code;
+    protected final int code;
 
     @Schema(description = "응답 메시지", example = "OK")
-    private final String message;
+    protected final String message;
 
     @Schema(description = "응답 데이터")
-    private final List<Department> item;
+    protected final List<T> item;
 
-    public DepartmentResponseDto(HttpStatus httpStatus, Department item) {
+    public BaseResponseDto(HttpStatus httpStatus, T item) {
 
         this.code = httpStatus.value();
         this.message = httpStatus.getReasonPhrase();
         this.item = Collections.singletonList(item);
+
+    }
+
+    protected BaseResponseDto(HttpStatus httpStatus, List<T> items) {
+
+        this.code = httpStatus.value();
+        this.message = httpStatus.getReasonPhrase();
+        this.item = items;
 
     }
 

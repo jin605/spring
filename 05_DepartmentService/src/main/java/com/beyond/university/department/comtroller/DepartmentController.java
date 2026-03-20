@@ -2,8 +2,9 @@ package com.beyond.university.department.comtroller;
 
 import com.beyond.university.common.excpetion.UniversityException;
 import com.beyond.university.common.excpetion.message.ExceptionMessage;
-import com.beyond.university.department.model.dto.DepartmentResponseDto;
-import com.beyond.university.department.model.dto.DepartmentsResponseDto;
+import com.beyond.university.common.model.dto.BaseResponseDto;
+import com.beyond.university.common.model.dto.ItemsResponseDto;
+import com.beyond.university.department.model.dto.DepartmentRequestDto;
 import com.beyond.university.department.model.service.DepartmentService;
 import com.beyond.university.department.model.vo.Department;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,9 +83,9 @@ public class DepartmentController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
 
     })
-    public ResponseEntity<DepartmentsResponseDto> getDepartments(@RequestParam int page,
-                                                                 @RequestParam int numOfRows,
-                                                                 @RequestParam(required = false) String openYn) {
+    public ResponseEntity<ItemsResponseDto<Department>> getDepartments(@RequestParam int page,
+                                                           @RequestParam int numOfRows,
+                                                           @RequestParam(required = false) String openYn) {
 
         int totalCount = departmentService.getDepartmentCount(openYn);
 
@@ -96,7 +99,7 @@ public class DepartmentController {
 
 
         return ResponseEntity.ok(
-                new DepartmentsResponseDto(HttpStatus.OK, departments, page, totalCount)
+                new ItemsResponseDto<>(HttpStatus.OK, departments, page, totalCount)
         );
 
     }
@@ -119,15 +122,31 @@ public class DepartmentController {
     })
     @GetMapping("/departments/{department-no}")
     @Operation(summary = "학과 상세 조회", description = "학과 번호로 학과의 상세 정보를 조회한다.")
-    public ResponseEntity<DepartmentResponseDto> getDepartment(
+    public ResponseEntity<BaseResponseDto<Department>> getDepartment(
             @Parameter(description = "학과번호", example = "001")
             @PathVariable("department-no") String departmentNo) {
 
         Department department = departmentService.getDepartmentByNo(departmentNo)
                 .orElseThrow(() -> new UniversityException(ExceptionMessage.DEPARTMENT_NOT_FOUND));
 
-        return ResponseEntity.ok(new DepartmentResponseDto(HttpStatus.OK, department));
+        return ResponseEntity.ok(new BaseResponseDto<>(HttpStatus.OK, department));
 
     }
+
+    @PostMapping("/departments")
+    public ResponseEntity<Void> create(@RequestBody DepartmentRequestDto requestDto) {
+
+        Department department = requestDto.toDepartment();
+
+        System.out.println(department);
+
+        departmentService.save(department);
+
+        System.out.println(department);
+
+        return ResponseEntity.ok().build();
+    }
+
+
 
 }

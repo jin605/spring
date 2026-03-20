@@ -16,4 +16,6 @@ public interface DepartmentMapper {
     List<Department> selectAll(@Param("openYn") String openYn, RowBounds rowBounds);
 
     Optional<Department> selectDepartmentNo(@Param("departmentNo") String departmentNo);
+
+    void insertDepartment(Department department);
 }

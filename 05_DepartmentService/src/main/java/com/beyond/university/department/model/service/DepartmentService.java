@@ -12,5 +12,7 @@ public interface DepartmentService {
     int getDepartmentCount(String openYn);
 
     Optional<Department> getDepartmentByNo(String departmentNo);
+
+    void save(Department department);
 }
 
