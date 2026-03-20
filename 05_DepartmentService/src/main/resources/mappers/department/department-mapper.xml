@@ -3,6 +3,15 @@
 
 <mapper namespace="com.beyond.university.department.model.mapper.DepartmentMapper">
 
+    <sql id="selectDepartmentSql">
+        SELECT department_no,
+               department_name,
+               category,
+               open_yn,
+               capacity
+        FROM department
+    </sql>
+
     <resultMap id="departmentResultMap" type="Department">
         <id property="no" column="department_no"/>
         <result property="name" column="department_name"/>
@@ -39,13 +48,18 @@
 
     <select id="selectAll" parameterType="String" resultMap="departmentResultMap">
 
-        SELECT department_no,
-        department_name,
-        category,
-        open_yn,
-        capacity
-        FROM department
+        <include refid="selectDepartmentSql"/>
+        <if test="openYn !- null">
+            WHERE open_yn = #{openno}
+        </if>
         ORDER BY department_name
+
+    </select>
+
+    <select id="selectDepartmentNo" parameterType="String" resultMap="departmentResultMap">
+
+        <include refid="selectDepartmentSql"/>
+        WHERE department_no = #{departmentNo}
 
     </select>
 
