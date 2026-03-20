@@ -18,4 +18,6 @@ public interface DepartmentMapper {
     Optional<Department> selectDepartmentNo(@Param("departmentNo") String departmentNo);
 
     void insertDepartment(Department department);
+
+    void updateDepartment(Department department);
 }

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -105,6 +107,7 @@ public class DepartmentController {
         );
 
     }
+
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -135,9 +138,29 @@ public class DepartmentController {
 
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "CREATED",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "BAD_REQUEST",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "INTENAL_SERVER_ERROR",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+
+    })
+
     @PostMapping("/departments")
+    @Operation(summary = "학과 등록", description = "학과 정보를 JSON 문자열로 받아서 등록한다.")
 //    public ResponseEntity<Void> create(@RequestBody DepartmentRequestDto requestDto) {
-    public ResponseEntity<BaseResponseDto<Department>> create(@RequestBody DepartmentRequestDto requestDto) {
+    public ResponseEntity<BaseResponseDto<Department>> create(
+            @Valid @RequestBody DepartmentRequestDto requestDto) {
 
         Department department = requestDto.toDepartment();
 
@@ -152,6 +175,20 @@ public class DepartmentController {
                 .body(new BaseResponseDto<>(HttpStatus.CREATED, department));
     }
 
+    @PutMapping("/departments/{department-no}")
+    public ResponseEntity<Void> update(
+            @PathVariable("department-no") String departmentNo,
+            @Valid @RequestBody DepartmentRequestDto requestDto) {
+
+        Department department = departmentService.getDepartmentByNo(departmentNo)
+                .orElseThrow(() -> new UniversityException(ExceptionMessage.DEPARTMENT_NOT_FOUND));
+
+        department.setDepartment(requestDto);
+
+        departmentService.save(department);
+
+        return ResponseEntity.noContent().build();
+    }
 
 
 }
