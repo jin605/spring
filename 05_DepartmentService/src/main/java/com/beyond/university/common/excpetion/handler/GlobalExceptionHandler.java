@@ -1,5 +1,6 @@
 package com.beyond.university.common.excpetion.handler;
 
+import com.beyond.university.common.excpetion.UniversityException;
 import com.beyond.university.common.excpetion.dto.ApiErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,19 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UniversityException.class)
+    public ResponseEntity<ApiErrorResponseDto> handleException (UniversityException e) {
+        ApiErrorResponseDto apiErrorResponseDto = new ApiErrorResponseDto(
+                e.getHttpStatus().value(),
+                e.getStatus(),
+                e.getMessage()
+        );
+
+        log.error("UniversityException : {}", e.getMessage());
+
+        return new ResponseEntity<>(apiErrorResponseDto, e.getHttpStatus());
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponseDto> handleException(Exception e) {
