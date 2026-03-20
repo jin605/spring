@@ -41,16 +41,14 @@
             <if test="openYn != null">
                 open_yn = #{openYn}
             </if>
-
         </where>
-
     </select>
 
     <select id="selectAll" parameterType="String" resultMap="departmentResultMap">
 
         <include refid="selectDepartmentSql"/>
-        <if test="openYn !- null">
-            WHERE open_yn = #{openno}
+        <if test="openYn != null">
+            WHERE open_yn = #{openYn}
         </if>
         ORDER BY department_name
 
