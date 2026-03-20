@@ -13,13 +13,14 @@ import java.util.List;
 public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentMapper departmentMapper;
 
-    public int getDepartmentCount() {
+    public int getDepartmentCount(String openYn) {
 
-        return departmentMapper.selectDepartmentsCount();
+        return departmentMapper.selectDepartmentsCount(openYn);
     }
 
+
     @Override
-    public List<Department> getDepartments(int page, int numOfRows) {
+    public List<Department> getDepartments(int page, int numOfRows, String openYn) {
 
         /*
             Mybatis에서 페이징 처리
@@ -43,7 +44,12 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         RowBounds rowBounds = new RowBounds(offset, numOfRows);
 
-        return departmentMapper.selectAll(rowBounds);
+//        if (true) {
+//            throw new RuntimeException("서비스 실행 중 에러 발생");
+//
+//        }
+
+        return departmentMapper.selectAll(openYn,rowBounds);
 
     }
 

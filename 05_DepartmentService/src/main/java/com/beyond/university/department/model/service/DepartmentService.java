@@ -6,7 +6,8 @@ import java.util.List;
 
 public interface DepartmentService {
 
-    List<Department> getDepartments(int page, int numOfRows);
+    List<Department> getDepartments(int page, int numOfRows, String openYn);
 
-    int getDepartmentCount();
+    int getDepartmentCount(String openYn);
+
 }

@@ -48,15 +48,17 @@ public class DepartmentController {
     @Operation(summary = "학과 목록 조회", description = "학과의 목록을 조회한다.")
     @Parameters({
             @Parameter(name = "page", description = "페이지 번호", example = "1"),
-            @Parameter(name = "numOfRows", description = "한 페이지 결과 수", example = "10")
+            @Parameter(name = "numOfRows", description = "한 페이지 결과 수", example = "10"),
+            @Parameter(name = "openYn", description = "개설여부", example = "Y")
     })
     public ResponseEntity<DepartmentsResponseDto> getDepartments(@RequestParam int page,
-                                                                 @RequestParam int numOfRows) {
+                                                                 @RequestParam int numOfRows,
+                                                                 @RequestParam(required = false) String openYn) {
 
-        int totalCount = departmentService.getDepartmentCount();
+        int totalCount = departmentService.getDepartmentCount(openYn);
 
         List<Department> departments =
-                departmentService.getDepartments(page,numOfRows);
+                departmentService.getDepartments(page,numOfRows,openYn);
 
         System.out.println(totalCount);
 
