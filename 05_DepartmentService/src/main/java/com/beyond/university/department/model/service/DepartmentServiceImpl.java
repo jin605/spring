@@ -7,6 +7,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,12 @@ public class DepartmentServiceImpl implements DepartmentService {
     public int getDepartmentCount(String openYn) {
 
         return departmentMapper.selectDepartmentsCount(openYn);
+    }
+
+    @Override
+    public Optional<Department> getDepartmentByNo(String departmentNo) {
+        
+        return departmentMapper.selectDepartmentNo(departmentNo);
     }
 
 

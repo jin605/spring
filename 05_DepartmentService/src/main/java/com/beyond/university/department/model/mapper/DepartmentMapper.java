@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface DepartmentMapper {
@@ -13,4 +14,6 @@ public interface DepartmentMapper {
     int selectDepartmentsCount(@Param("openYn") String openYn);
 
     List<Department> selectAll(@Param("openYn") String openYn, RowBounds rowBounds);
+
+    Optional<Department> selectDepartmentNo(@Param("departmentNo") String departmentNo);
 }

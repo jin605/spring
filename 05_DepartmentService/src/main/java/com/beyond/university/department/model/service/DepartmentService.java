@@ -3,6 +3,7 @@ package com.beyond.university.department.model.service;
 import com.beyond.university.department.model.vo.Department;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DepartmentService {
 
@@ -10,4 +11,6 @@ public interface DepartmentService {
 
     int getDepartmentCount(String openYn);
 
+    Optional<Department> getDepartmentByNo(String departmentNo);
 }
+
