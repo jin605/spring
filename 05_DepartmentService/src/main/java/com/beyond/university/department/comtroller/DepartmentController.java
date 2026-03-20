@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
 /*
@@ -46,7 +48,7 @@ import java.util.List;
     5. 학과 삭제
       - DELETE /api/v1/department-service/departments/{department-no}
  */
-
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/department-service")
 @RequiredArgsConstructor
@@ -134,17 +136,20 @@ public class DepartmentController {
     }
 
     @PostMapping("/departments")
-    public ResponseEntity<Void> create(@RequestBody DepartmentRequestDto requestDto) {
+//    public ResponseEntity<Void> create(@RequestBody DepartmentRequestDto requestDto) {
+    public ResponseEntity<BaseResponseDto<Department>> create(@RequestBody DepartmentRequestDto requestDto) {
 
         Department department = requestDto.toDepartment();
 
-        System.out.println(department);
-
         departmentService.save(department);
 
-        System.out.println(department);
+        log.info("Department No : {}", department.getNo());
 
-        return ResponseEntity.ok().build();
+//        return ResponseEntity.created(URI.create("/api/v1/department-service/departments/" + department.getNo())).build();
+
+        return ResponseEntity
+                .created(URI.create("/api/v1/department-service/departments/" + department.getNo()))
+                .body(new BaseResponseDto<>(HttpStatus.CREATED, department));
     }
 
 
