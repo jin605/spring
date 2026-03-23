@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <io.jsonwebtoken.version>0.13.0</io.jsonwebtoken.version>
     </properties>
     <dependencies>
         <dependency>
@@ -35,6 +36,35 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- 스프링 시큐리티를 사용하기 위한 의존성 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- JJWT 관련 의존성 -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${io.jsonwebtoken.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${io.jsonwebtoken.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${io.jsonwebtoken.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- 스웨거 관련 의존성 -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -72,6 +102,12 @@
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter-test</artifactId>
             <version>3.0.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -1,7 +1,7 @@
-package com.beyond.university.common.excpetion.handler;
+package com.beyond.university.common.exception.handler;
 
-import com.beyond.university.common.excpetion.UniversityException;
-import com.beyond.university.common.excpetion.dto.ApiErrorResponseDto;
+import com.beyond.university.common.exception.UniversityException;
+import com.beyond.university.common.exception.dto.ApiErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +9,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /*
     스프링 예외 처리

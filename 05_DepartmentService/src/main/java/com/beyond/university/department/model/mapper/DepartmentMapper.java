@@ -10,14 +10,15 @@ import java.util.Optional;
 
 @Mapper
 public interface DepartmentMapper {
-
     int selectDepartmentsCount(@Param("openYn") String openYn);
 
     List<Department> selectAll(@Param("openYn") String openYn, RowBounds rowBounds);
 
-    Optional<Department> selectDepartmentNo(@Param("departmentNo") String departmentNo);
+    Optional<Department> selectDepartmentByNo(@Param("departmentNo") String departmentNo);
 
     void insertDepartment(Department department);
 
     void updateDepartment(Department department);
+
+    void deleteDepartment(@Param("departmentNo") String departmentNo);
 }

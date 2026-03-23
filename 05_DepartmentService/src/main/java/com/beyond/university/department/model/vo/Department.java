@@ -25,7 +25,7 @@ public class Department {
     public void setDepartment(DepartmentRequestDto requestDto) {
 
         this.name = requestDto.getName();
-        this.category = requestDto.getName();
+        this.category = requestDto.getCategory();
         this.openYn = requestDto.getOpenYn();
         this.capacity = requestDto.getCapacity();
 

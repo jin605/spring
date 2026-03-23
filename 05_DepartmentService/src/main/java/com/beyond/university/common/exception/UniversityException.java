@@ -1,6 +1,6 @@
-package com.beyond.university.common.excpetion;
+package com.beyond.university.common.exception;
 
-import com.beyond.university.common.excpetion.message.ExceptionMessage;
+import com.beyond.university.common.exception.message.ExceptionMessage;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
