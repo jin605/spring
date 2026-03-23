@@ -2,6 +2,10 @@ package com.beyond.university.auth.jwt;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.Map;
 public class JwtTokenProvider {
 
     private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
     private static final long ACCESS_TOKEN_EXPIRATION = 1000L * 60 * 30; // 30분
 
     public String createAccessToken(String username, List<String> authorities) {
@@ -28,4 +33,33 @@ public class JwtTokenProvider {
 
         return jwtUtil.createJwtToken(claims, ACCESS_TOKEN_EXPIRATION);
     }
+
+    // 클라이언트가 헤더를 통해 서버로 전달한 토큰을 추출하는 메소드
+    public String resolveToken (String bearerToken) {
+
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    public boolean isUsableAccessToken(String accessToken) {
+
+        return accessToken != null
+                && jwtUtil.validateToken(accessToken);
+    }
+
+    // SecurityContext 객체에 저장될 Authentication 객체를 생성하는 메소드
+    public Authentication createAuthentication(String token) {
+        String username = jwtUtil.getUsername(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        return new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities());
+
+    }
+
 }

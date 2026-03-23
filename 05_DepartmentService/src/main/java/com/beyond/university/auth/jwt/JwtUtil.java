@@ -51,28 +51,42 @@ public class JwtUtil {
                 .compact();
 
     }
+    // 클레임에서 username을 추출하는 메소드
+    public String getUsername(String token) {
 
-    public long getIssuedAt(String accessToken) {
-
-        return getClaims(accessToken).getIssuedAt().getTime();
+        return getClaims(token).get("username", String.class);
     }
 
-    public long getExpiredAt(String accessToken) {
+    public long getIssuedAt(String token) {
 
-        return getClaims(accessToken).getExpiration().getTime();
+        return getClaims(token).getIssuedAt().getTime();
     }
 
-    public Claims getClaims (String accessToken) {
+    public long getExpiredAt(String token) {
+
+        return getClaims(token).getExpiration().getTime();
+    }
+
+    // 토큰이 유효한지 확인한느 메소드 (토큰이 유효하면 true, 말료되었으면 false반환)
+    public boolean validateToken(String token) {
+
+        // JWT의 만료 시간을 현재 시간과 비교하여 토큰이 만료되엇는지 확인한다.
+        return !getClaims(token).getExpiration().before(new Date());
+
+    }
+
+    public Claims getClaims (String token) {
 
         // 토큰이 만료되면 parseSignedClaims() 메소드에서
         // ExpiredJwtException 예외가 발생하여 코드가 실행되지 않기 때문에
         // ExpiredJwtException 예외가 발생해도 클래임을 반환하도록 예외 처리를 한다.
+
         try {
             return Jwts
                     .parser()
                     .verifyWith(secretKey)
                     .build()
-                    .parseSignedClaims(accessToken)
+                    .parseSignedClaims(token)
                     .getPayload();
 
         } catch (ExpiredJwtException e) {
@@ -80,7 +94,7 @@ public class JwtUtil {
             return e.getClaims();
 
         }
-
-
     }
+
+
 }
