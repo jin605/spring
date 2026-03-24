@@ -52,6 +52,8 @@ public class JwtUtil {
 
     }
 
+
+
     // 클래임에서 JTI(JWT ID)를 추출하는 메소드
     public String getJti(String token) {
 
@@ -63,6 +65,12 @@ public class JwtUtil {
     public String getUsername(String token) {
 
         return getClaims(token).get("username", String.class);
+    }
+
+    // 클레임에서 token_type을 추출하는 메소드
+    public String getTokenType(String token) {
+
+        return getClaims(token).get("token_type", String.class);
     }
 
     public long getIssuedAt(String token) {
@@ -103,7 +111,6 @@ public class JwtUtil {
 
         }
     }
-
 
 
 

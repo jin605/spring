@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         System.out.println(token);
 
-        // 2. 추출한 토큰의 무결성과 유효성을 검증한다 & 블랙리스트 확인
+        // 2. 추출한 토큰의 무결성과 유효성을 검증한다 & 블랙리스트 확인 & 엑세스 토큰 확인
         if (jwtTokenProvider.isUsableAccessToken(token)) {
 
             // 3. Authentication 객체를 생성

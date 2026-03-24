@@ -48,12 +48,13 @@ public class JwtTokenProvider {
         return null;
     }
 
-    // 액세스 토큰(Access Token)의 무결성과 유효성을 검증 & 블랙리스트 확인
+    // 액세스 토큰(Access Token)의 무결성과 유효성을 검증 & 블랙리스트 확인 & 엑세스 토큰 확인
     public boolean isUsableAccessToken(String accessToken) {
 
         return accessToken != null
                 && jwtUtil.validateToken(accessToken)
-                && !isBlacklisted(accessToken);
+                && !isBlacklisted(accessToken)
+                && isAccessToken(accessToken);
     }
 
     // SecurityContext 객체에 저장될 Authentication 객체를 생성하는 메소드
@@ -67,8 +68,8 @@ public class JwtTokenProvider {
                 userDetails.getAuthorities());
 
     }
-
     // 로그아웃 시 블랙리스트에 엑세스 토큰(Access Token)을 저장하는 메소드
+
     public void addBlacklist(String accessToken) {
 
         String blacklistKey = String.format("blacklist:%S",jwtUtil.getJti(accessToken));
@@ -80,22 +81,13 @@ public class JwtTokenProvider {
                 .set(blacklistKey, accessToken, ACCESS_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
 
     }
-
     // 리프레시 토큰(Refresh Token)을 삭제하는 메소드
+
     public void deleteRefreshToken(String accessToken) {
         String username = jwtUtil.getUsername(accessToken);
 
         redisTemplate.delete(String.format("refresh:%s", username));
     }
-
-    // 엑세스 토큰이 블랙리스트 등록 여부를 확인하는 메소드
-    private boolean isBlacklisted(String accessToken) {
-        String blacklistKey = String.format("blacklist:%S",jwtUtil.getJti(accessToken));
-
-        return redisTemplate.hasKey(blacklistKey);
-
-     }
-
      public String createRefreshToken(String username) {
 
         Map<String, Object> claims =
@@ -113,4 +105,19 @@ public class JwtTokenProvider {
         return refreshToken;
 
      }
+
+    // 엑세스 토큰이 블랙리스트 등록 여부를 확인하는 메소드
+
+    private boolean isBlacklisted(String accessToken) {
+        String blacklistKey     = String.format("blacklist:%S",jwtUtil.getJti(accessToken));
+
+        return redisTemplate.hasKey(blacklistKey);
+
+    }
+
+    // 엑세스 토큰(Access Token) 여부를 확인하는 메소드
+    private boolean isAccessToken(String accessToken) {
+
+        return jwtUtil.getTokenType(accessToken).equals("access");
+    }
 }
