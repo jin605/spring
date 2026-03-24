@@ -3,6 +3,7 @@ package com.beyond.university.auth.controller;
 import com.beyond.university.auth.model.dto.LoginRequestDto;
 import com.beyond.university.auth.model.dto.LoginResponse;
 import com.beyond.university.auth.model.service.AuthService;
+import com.beyond.university.auth.model.service.JwtCookieService;
 import com.beyond.university.common.model.dto.BaseResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,14 +14,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Duration;
 
 /*
     인증 관련 API
@@ -41,6 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Auth APIs", description = "인증 관련 API 목록")
 public class AuthController {
     private final AuthService authService;
+    private final JwtCookieService jwtCookieService;
 
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "아이디와 패스워드를 JSON 문자열로 받아서 로그인한다.")
@@ -67,12 +73,39 @@ public class AuthController {
         LoginResponse loginResponse = authService.login(
                 loginRequestDto.getUsername(),
                 loginRequestDto.getPassword()
+
         );
 
-        return ResponseEntity.ok(new BaseResponseDto<>(HttpStatus.OK, loginResponse));
+        String refreshToken = authService.createRefreshToken(loginResponse.getUsername());
+        ResponseCookie cookie =
+                jwtCookieService.createRefreshTokenCookie(refreshToken, Duration.ofDays(1));
+        HttpHeaders headers = jwtCookieService.createRefreshTokenCookieHeaders(cookie);
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(new BaseResponseDto<>(HttpStatus.OK, loginResponse));
+
     }
 
     @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "엑세스 토큰(Access Token)을 전달받아 로그아웃 한다.")@ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "UNAUTHORIZED",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            )
+    })
     public ResponseEntity<Void> logout(
             @Parameter(hidden = true) @RequestHeader("Authorization") String bearerToken
     ) {
@@ -83,4 +116,6 @@ public class AuthController {
 
 
     }
+
+
 }

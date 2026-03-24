@@ -27,6 +27,7 @@ public class JwtTokenProvider {
     private final UserDetailsService userDetailsService;
     private final RedisTemplate<String, String> redisTemplate;
     private static final long ACCESS_TOKEN_EXPIRATION = 1000L * 60 * 30; // 30분
+    private static final long REFRESH_TOKEN_EXPIRATION = 1000L * 60 * 60L * 24L; // 1일
 
     public String createAccessToken(String username, List<String> authorities) {
 
@@ -66,6 +67,7 @@ public class JwtTokenProvider {
                 userDetails.getAuthorities());
 
     }
+
     // 로그아웃 시 블랙리스트에 엑세스 토큰(Access Token)을 저장하는 메소드
     public void addBlacklist(String accessToken) {
 
@@ -79,10 +81,36 @@ public class JwtTokenProvider {
 
     }
 
+    // 리프레시 토큰(Refresh Token)을 삭제하는 메소드
+    public void deleteRefreshToken(String accessToken) {
+        String username = jwtUtil.getUsername(accessToken);
+
+        redisTemplate.delete(String.format("refresh:%s", username));
+    }
+
     // 엑세스 토큰이 블랙리스트 등록 여부를 확인하는 메소드
     private boolean isBlacklisted(String accessToken) {
         String blacklistKey = String.format("blacklist:%S",jwtUtil.getJti(accessToken));
 
         return redisTemplate.hasKey(blacklistKey);
+
+     }
+
+     public String createRefreshToken(String username) {
+
+        Map<String, Object> claims =
+                Map.of("username", username, "token_type", "refresh");
+
+         String refreshToken = jwtUtil.createJwtToken(claims, REFRESH_TOKEN_EXPIRATION);
+         String refreshKey = String.format("refresh:%s", username);
+
+         // 레데스(Redis)에 리프레시 토큰(ReFresh Token)을 저장
+         // 리프레시 토큰(Refresh Token)의 만료 시간 동안만 레디스(Redis)에 토큰 저장
+         redisTemplate.opsForValue()
+                 .set(refreshKey, refreshToken, REFRESH_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
+
+
+        return refreshToken;
+
      }
 }

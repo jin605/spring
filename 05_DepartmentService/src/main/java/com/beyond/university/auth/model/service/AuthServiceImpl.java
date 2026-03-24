@@ -41,9 +41,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(String bearerToken) {
+
         String accessToken = jwtTokenProvider.resolveToken(bearerToken);
 
         jwtTokenProvider.addBlacklist(accessToken);
+        jwtTokenProvider.deleteRefreshToken(accessToken);
 
     }
 
@@ -64,5 +66,11 @@ public class AuthServiceImpl implements AuthService {
                 .issuedAt(jwtUtil.getIssuedAt(accessToken))
                 .expiredAt(jwtUtil.getExpiredAt(accessToken))
                 .build();
+    }
+
+    @Override
+    public String createRefreshToken(String username) {
+
+        return jwtTokenProvider.createRefreshToken(username);
     }
 }
