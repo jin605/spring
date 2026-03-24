@@ -10,5 +10,5 @@ public interface AuthService {
 
     String createRefreshToken(String username);
 
-
+    LoginResponse refreshAccessToken(String refreshToken);
 }

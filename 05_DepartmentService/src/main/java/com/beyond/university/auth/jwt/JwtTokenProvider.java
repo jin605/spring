@@ -106,6 +106,14 @@ public class JwtTokenProvider {
 
      }
 
+    public boolean isValidRefreshToken(String refreshToken) {
+        String username = jwtUtil.getUsername(refreshToken);
+        String storedRefreshToken =
+                redisTemplate.opsForValue().get(String.format("refresh:%s", username));
+
+        return storedRefreshToken != null && storedRefreshToken.equals(refreshToken);
+    }
+
     // 엑세스 토큰이 블랙리스트 등록 여부를 확인하는 메소드
 
     private boolean isBlacklisted(String accessToken) {
@@ -120,4 +128,6 @@ public class JwtTokenProvider {
 
         return jwtUtil.getTokenType(accessToken).equals("access");
     }
+
+
 }

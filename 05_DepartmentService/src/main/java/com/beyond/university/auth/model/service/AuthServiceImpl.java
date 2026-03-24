@@ -49,6 +49,28 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+    @Override
+    public LoginResponse refreshAccessToken(String refreshToken) {
+        // 1. 리프레시 토큰 검증
+        if (refreshToken.isBlank() || !jwtUtil.validateToken(refreshToken)) {
+
+            throw new UniversityException(ExceptionMessage.REFRESH_TOKEN_INVALID);
+        }
+
+        // 2. 레디스(Redis)의 리프레시 토큰 비교
+        if (!jwtTokenProvider.isValidRefreshToken(refreshToken)) {
+
+            throw new UniversityException(ExceptionMessage.REFRESH_TOKEN_INVALID);
+        }
+
+        // 3. 사용자 정보를 조회 후 새로운 LoginResponse 객체를 생성
+        User user = authMapper.selectUserByUsername(jwtUtil.getUsername(refreshToken));
+
+        return createLoginResponse(user);
+
+    }
+
+
     private LoginResponse createLoginResponse(User user) {
         // 사용자 권한 추출
         List<String> authorities =
@@ -73,4 +95,8 @@ public class AuthServiceImpl implements AuthService {
 
         return jwtTokenProvider.createRefreshToken(username);
     }
+
+
+
+
 }

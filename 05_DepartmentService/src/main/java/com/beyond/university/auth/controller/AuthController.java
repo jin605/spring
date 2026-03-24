@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -118,6 +119,34 @@ public class AuthController {
                 .headers(headers)
                 .build();
 
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "토큰 재발급", description = "리프레시 토큰(Refresh Token)으로 엑세스 토큰(Access Token) 재발급")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "BAD_REQUEST",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            )
+    })
+    public ResponseEntity<BaseResponseDto<LoginResponse>> refreshToken(
+            @Parameter(hidden = true) @CookieValue(name = "refresh_token", defaultValue = "") String refreshToken) {
+
+        LoginResponse loginResponse = authService.refreshAccessToken(refreshToken);
+
+
+        return ResponseEntity.ok(new BaseResponseDto<>(HttpStatus.OK, loginResponse));
     }
 
 
