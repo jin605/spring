@@ -107,13 +107,16 @@ public class AuthController {
             )
     })
     public ResponseEntity<Void> logout(
-            @Parameter(hidden = true) @RequestHeader("Authorization") String bearerToken
-    ) {
+            @Parameter(hidden = true) @RequestHeader("Authorization") String bearerToken) {
 
         authService.logout(bearerToken);
+        ResponseCookie responseCookie = jwtCookieService.deleteRefreshTokenCookie();
+        HttpHeaders headers = jwtCookieService.createRefreshTokenCookieHeaders(responseCookie);
 
-        return ResponseEntity.noContent().build();
-
+        return ResponseEntity
+                .noContent()
+                .headers(headers)
+                .build();
 
     }
 
