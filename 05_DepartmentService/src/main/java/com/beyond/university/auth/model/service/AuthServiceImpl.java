@@ -39,6 +39,14 @@ public class AuthServiceImpl implements AuthService {
         return createLoginResponse(user);
     }
 
+    @Override
+    public void logout(String bearerToken) {
+        String accessToken = jwtTokenProvider.resolveToken(bearerToken);
+
+        jwtTokenProvider.addBlacklist(accessToken);
+
+    }
+
     private LoginResponse createLoginResponse(User user) {
         // 사용자 권한 추출
         List<String> authorities =

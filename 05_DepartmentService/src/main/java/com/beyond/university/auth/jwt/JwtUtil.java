@@ -51,6 +51,14 @@ public class JwtUtil {
                 .compact();
 
     }
+
+    // 클래임에서 JTI(JWT ID)를 추출하는 메소드
+    public String getJti(String token) {
+
+        return getClaims(token).getId();
+
+    }
+
     // 클레임에서 username을 추출하는 메소드
     public String getUsername(String token) {
 
@@ -95,6 +103,8 @@ public class JwtUtil {
 
         }
     }
+
+
 
 
 }

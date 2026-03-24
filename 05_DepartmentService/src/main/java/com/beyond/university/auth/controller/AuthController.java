@@ -5,6 +5,7 @@ import com.beyond.university.auth.model.dto.LoginResponse;
 import com.beyond.university.auth.model.service.AuthService;
 import com.beyond.university.common.model.dto.BaseResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -68,5 +70,17 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(new BaseResponseDto<>(HttpStatus.OK, loginResponse));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @Parameter(hidden = true) @RequestHeader("Authorization") String bearerToken
+    ) {
+
+        authService.logout(bearerToken);
+
+        return ResponseEntity.noContent().build();
+
+
     }
 }

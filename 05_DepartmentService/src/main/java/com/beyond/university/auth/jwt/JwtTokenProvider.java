@@ -2,6 +2,7 @@ package com.beyond.university.auth.jwt;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /*
     JwtTokenProvider
@@ -23,6 +25,7 @@ public class JwtTokenProvider {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final RedisTemplate<String, String> redisTemplate;
     private static final long ACCESS_TOKEN_EXPIRATION = 1000L * 60 * 30; // 30분
 
     public String createAccessToken(String username, List<String> authorities) {
@@ -44,10 +47,12 @@ public class JwtTokenProvider {
         return null;
     }
 
+    // 액세스 토큰(Access Token)의 무결성과 유효성을 검증 & 블랙리스트 확인
     public boolean isUsableAccessToken(String accessToken) {
 
         return accessToken != null
-                && jwtUtil.validateToken(accessToken);
+                && jwtUtil.validateToken(accessToken)
+                && !isBlacklisted(accessToken);
     }
 
     // SecurityContext 객체에 저장될 Authentication 객체를 생성하는 메소드
@@ -61,5 +66,23 @@ public class JwtTokenProvider {
                 userDetails.getAuthorities());
 
     }
+    // 로그아웃 시 블랙리스트에 엑세스 토큰(Access Token)을 저장하는 메소드
+    public void addBlacklist(String accessToken) {
 
+        String blacklistKey = String.format("blacklist:%S",jwtUtil.getJti(accessToken));
+
+        log.info("Blacklist key : {}", blacklistKey);
+
+        // 엑세스 토큰의 만료 시간 동안만 Redis에 엑세스 토큰을 저장
+        redisTemplate.opsForValue()
+                .set(blacklistKey, accessToken, ACCESS_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
+
+    }
+
+    // 엑세스 토큰이 블랙리스트 등록 여부를 확인하는 메소드
+    private boolean isBlacklisted(String accessToken) {
+        String blacklistKey = String.format("blacklist:%S",jwtUtil.getJti(accessToken));
+
+        return redisTemplate.hasKey(blacklistKey);
+     }
 }

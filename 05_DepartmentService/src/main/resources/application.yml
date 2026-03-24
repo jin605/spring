@@ -9,6 +9,13 @@ spring:
     url: jdbc:mariadb://localhost:3306/web
     username: beyond
     password: beyond
+  data:
+    redis:
+      host: localhost
+      username: default
+      password: beyond
+      port: 6379
+
 
 mybatis:
   type-aliases-package: com.beyond.university.*.model.vo
@@ -18,5 +25,5 @@ mybatis:
     jdbc-type-for-null: NULL
 
 jwt:
-  issuer: http://acoounts.beyond.com
+  ㅐ: http://acoounts.beyond.com
   secret: h1o2n3g4g5i6l7d8o9n0g;h1o2n3g4g5i6l7d8o9n0gh
